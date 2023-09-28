@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq.Expressions;
 
 namespace HULK;
@@ -126,12 +127,12 @@ public class Tokenizador
                 else
                 {
                     string valor = "";
-                    for (int j = i+1; j < a.Length; j++)
+                    for (int j = i + 1; j < a.Length; j++)
                     {
                         if (a[j] == '"')
                         {
                             AllTokens.Add(new Token("string", valor));
-                            i=j;
+                            i = j;
                             break;
                         }
                         else
@@ -144,42 +145,57 @@ public class Tokenizador
             }
             if (a[i] == '0' || a[i] == '1' || a[i] == '2' || a[i] == '3' || a[i] == '4' || a[i] == '5' || a[i] == '6' || a[i] == '7' || a[i] == '8' || a[i] == '9')
             {
-                string valor = "";
-                int contadorDePuntos = 0;
-
-                for (int j = i; j < a.Length; j++)
+                if (i == a.Length - 1)
                 {
-                    if (a[j] == '0' || a[i] == '1' || a[i] == '2' || a[i] == '3' || a[i] == '4' || a[i] == '5' || a[i] == '6' || a[i] == '7' || a[i] == '8' || a[i] == '9')
+                    //PONER UNA EXCEPTION
+                }
+                else
+                {
+                    string valor = "";
+                    int contadorDePuntos = 0;
+                    valor += a[i];
+
+                    for (int j = i + 1; j < a.Length; j++)
                     {
-                        valor += a[j];
-                        continue;
-                    }
-                    else if (a[j] == '.')
-                    {
-                        contadorDePuntos++;
-                        if (contadorDePuntos >= 2)
+                        if(j==a.Length-1)
                         {
-                            System.Console.WriteLine("ERROR");
-                            //PONER UNA EXCEPTION XQ LOS NUMEROS NO PUEDEN TENER DOS O MAS PUNTOS
+                            if(a[j]==' '||a[j]=='+'||a[j]=='-'||a[j]=='*'||a[j]=='/'||a[j]==')'||a[j]=='='||a[j]==','||a[j]==';')
+                            {
+                                AllTokens.Add(new Token("numero",valor));
+                                i=j-1;
+                                continue;
+                            }
+                            else
+                            {
+                                //Exception
+                            }
                         }
-                        else
+                        if (a[j] == '0' || a[j] == '1' || a[j] == '2' || a[j] == '3' || a[j] == '4' || a[j] == '5' || a[j] == '6' || a[j] == '7' || a[j] == '8' || a[j] == '9')
                         {
-                            valor += a[j];
+                            valor+=a[j];
+                            i=j;
                             continue;
                         }
-                    }
-                    else if (a[j] == ' ' || a[j] == ';' || a[j] == ',' || a[j] == '+' || a[j] == '-' || a[j] == '*' || a[j] == '/' || a[j] == ')' || a[j] == '%')
-                    {
-                        AllTokens.Add(new Token("numero", valor));
-                        i = j;
-                        break;
-                    }
-                    else 
-                    {
-                        //crear una exception
+                        else if(a[j]=='.')
+                        {
+                            contadorDePuntos++;
+                            if(contadorDePuntos>1)
+                            {
+                                throw new Exception("error,tiene dos puntos");
+                            }
+                            valor+='.';                            
+                        }
+                        else if(a[j]==' '||a[j]=='+'||a[j]=='-'||a[j]=='*'||a[j]=='/'||a[j]==')'||a[j]=='='||a[j]==','||a[j]==';')
+                        {
+                            AllTokens.Add(new Token("numero",valor));
+                            i=j-1;break;
+                        }
+                        else throw new Exception("ERROR");
                     }
                 }
             }
+
+
         }
     }
 }
