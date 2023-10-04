@@ -1,14 +1,14 @@
 ﻿namespace HULK;
 
-    class Program
+class Program
+{
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        while (true)
         {
-            string a =System.Console.ReadLine();
-            Tokenizador Monga = new Tokenizador(a);
-            foreach (var b in Monga.AllTokens)
-            {
-                System.Console.WriteLine("{0}:{1}",b.tipo,b.valor);
-            }
+            string input = System.Console.ReadLine();
+            Tokenizador tokens = new Tokenizador(input);
+            Parser parser = new Parser(tokens.AllTokens);
         }
     }
+}

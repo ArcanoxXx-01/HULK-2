@@ -27,6 +27,7 @@ public class Tokenizador
                 continue;
             }
             if (a[i] == '=')
+            {
                 if (i < a.Length - 1)
                 {
                     if (a[i + 1] == '=')
@@ -43,8 +44,11 @@ public class Tokenizador
                     }
                     else AllTokens.Add(new Token("igual", " "));
                     continue;
-                }//AQUI TENGO Q PONER UNA EXCEPTION XQ EL SIGNO = SERIA EL ULTIMO TOKEN Y EL ULTIMO SIEMPRE TIENE Q SER ;
+                }
+                throw new Exception("Se esperaba ';' al final de la linea");
+            }
             if (a[i] == '!')
+            {
                 if (i < a.Length - 1)
                 {
                     if (a[i + 1] == '=')
@@ -55,8 +59,11 @@ public class Tokenizador
                     }
                     else AllTokens.Add(new Token("negacion", " "));
                     continue;
-                }//AQUI TENGO Q PONER UNA EXCEPTION XQ EL SIGNO ! SERIA EL ULTIMO TOKEN Y EL ULTIMO SIEMPRE TIENE Q SER ;
+                }
+                throw new Exception("Se esperaba ';' al final de la linea");
+            }
             if (a[i] == '<')
+            {
                 if (i < a.Length - 1)
                 {
                     if (a[i + 1] == '=')
@@ -67,21 +74,24 @@ public class Tokenizador
                     }
                     else AllTokens.Add(new Token("menor", " "));
                     continue;
-                }//AQUI TENGO Q PONER UNA EXCEPTION XQ EL SIGNO < SERIA EL ULTIMO TOKEN Y EL ULTIMO SIEMPRE TIENE Q SER ;
+                }
+                throw new Exception("Se esperaba ';' al final de la linea");
+            }
             if (a[i] == '>')
+            {
                 if (i < a.Length - 1)
                 {
+                    if (a[i + 1] == '=')
                     {
-                        if (a[i + 1] == '=')
-                        {
-                            AllTokens.Add(new Token("mayorIgual", " "));
-                            i++;
-                            continue;
-                        }
-                        else AllTokens.Add(new Token("mayor", " "));
+                        AllTokens.Add(new Token("mayorIgual", " "));
+                        i++;
                         continue;
-                    }//AQUI TENGO Q PONER UNA EXCEPTION XQ EL SIGNO > SERIA EL ULTIMO TOKEN Y EL ULTIMO SIEMPRE TIENE Q SER ;            
+                    }
+                    else AllTokens.Add(new Token("mayor", " "));
+                    continue;
                 }
+                throw new Exception("Se esperaba ';' al final de la linea");
+            }
             if (a[i] == '+')
             {
                 AllTokens.Add(new Token("mas", " "));
@@ -124,7 +134,7 @@ public class Tokenizador
             }
             if (a[i] == '"')
             {
-                if (i == a.Length - 1) { }//PONER EXCEPTION XQ " SERIA EL ULTIMO TOKEN Y NO ';'
+                if (i == a.Length - 1)throw new Exception("Se esperaba ';' al final de la linea");
                 else
                 {
                     string valor = "";
@@ -141,14 +151,14 @@ public class Tokenizador
                             valor += a[j];
                         }
                     }
-                    //PONER UNA EXCEPTION XQ NO ENCONTRO NUNCA LAS " PARA CERRAR EL STRING 
+                    throw new Exception("Se esperaba \" ");
                 }
             }
             if (a[i] == '0' || a[i] == '1' || a[i] == '2' || a[i] == '3' || a[i] == '4' || a[i] == '5' || a[i] == '6' || a[i] == '7' || a[i] == '8' || a[i] == '9')
             {
                 if (i == a.Length - 1)
                 {
-                    //PONER UNA EXCEPTION
+                    throw new Exception("Se esperaba ';' al final de la linea");
                 }
                 else
                 {
@@ -160,7 +170,7 @@ public class Tokenizador
                     {
                         if (j == a.Length - 1)
                         {
-                            if (a[j] == ' ' || a[j] == '+' || a[j] == '-' || a[j] == '*' || a[j] == '/' || a[j] == ')' || a[j] == '=' || a[j] == ',' || a[j] == ';')
+                            if (a[j] == ';')
                             {
                                 AllTokens.Add(new Token("numero", valor));
                                 i = j - 1;
@@ -168,7 +178,7 @@ public class Tokenizador
                             }
                             else
                             {
-                                //Exception
+                                throw new Exception("Se esperaba ';' al final de la linea");
                             }
                         }
                         if (a[j] == '0' || a[j] == '1' || a[j] == '2' || a[j] == '3' || a[j] == '4' || a[j] == '5' || a[j] == '6' || a[j] == '7' || a[j] == '8' || a[j] == '9')
@@ -188,8 +198,13 @@ public class Tokenizador
                         }
                         else if (a[j] == ' ' || a[j] == '+' || a[j] == '-' || a[j] == '*' || a[j] == '/' || a[j] == ')' || a[j] == '=' || a[j] == ',' || a[j] == ';')
                         {
-                            AllTokens.Add(new Token("numero", valor));
-                            i = j - 1; break;
+                            if (valor[valor.Length] != '.')
+                            {
+                                AllTokens.Add(new Token("numero", valor));
+                                i = j - 1;
+                                break;
+                            }
+                            throw new Exception("Un Number no puede terminar en '.'");
                         }
                         else throw new Exception("ERROR");
                     }
@@ -216,7 +231,7 @@ public class Tokenizador
                         }
                         else
                         {
-                            //CREAR EXCEPTION UN ID NO PUEDE TENER CARACTERES DIFERENTES DE LETRAS ,NUMEROS O BARRA BAJA
+                            throw new Exception("Un identificador no puede tener caracteres diferentes de letras, numeros o '_'");
                         }
                     }
                 }
@@ -224,5 +239,3 @@ public class Tokenizador
         }
     }
 }
-
-
