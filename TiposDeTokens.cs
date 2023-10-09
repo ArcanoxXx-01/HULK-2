@@ -8,6 +8,8 @@ public enum TokenType
     multiplicacion,
     division,
     modulo,
+    Pow,
+    Concatenar,
     //Operadores de comparacion
     mayor,
     mayorIgual,
@@ -15,16 +17,27 @@ public enum TokenType
     menorIgual,
     dobleIgual,
     desigual,
-    //Tipos de variables
+    //Booleanos
+    True,
+    False,
+    negacion,
+    or,
+    and,
+    //Variables
     String,
-    Number,
-    Bool,
+    numero, 
     //Otros
     identificador,
-    numero,
-    negacion,
+    print,
+    funtion,
+    Let,
+    In,
+    PI,
+    Euler,
+    //asignar
     igual,
     flechita,
+    //separadores
     coma,
     puntoYcoma,
     parentesisAbierto,

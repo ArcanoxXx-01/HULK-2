@@ -9,7 +9,6 @@ public class Token
         this.tipo = tipo;
         this.valor = valor;
     }
-
     public Token Clonar()
     {
         return new Token(tipo, valor);

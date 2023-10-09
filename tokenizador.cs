@@ -18,12 +18,17 @@ public class Tokenizador
             if (a[i] == ' ') continue;
             if (a[i] == '(')
             {
-                AllTokens.Add(new Token(TokenType.parentesisAbierto, " "));
+                AllTokens.Add(new Token(TokenType.parentesisAbierto, "separador"));
                 continue;
             }
             if (a[i] == ')')
             {
-                AllTokens.Add(new Token(TokenType.parentesisCerrado, " "));
+                AllTokens.Add(new Token(TokenType.parentesisCerrado, "separador"));
+                continue;
+            }
+            if (a[i] == '@')
+            {
+                AllTokens.Add(new Token(TokenType.Concatenar, "operador"));
                 continue;
             }
             if (a[i] == '=')
@@ -32,17 +37,17 @@ public class Tokenizador
                 {
                     if (a[i + 1] == '=')
                     {
-                        AllTokens.Add(new Token(TokenType.dobleIgual, " "));
+                        AllTokens.Add(new Token(TokenType.dobleIgual, "comparador"));
                         i++;
                         continue;
                     }
                     else if (a[i + 1] == '>')
                     {
-                        AllTokens.Add(new Token(TokenType.flechita, " "));
+                        AllTokens.Add(new Token(TokenType.flechita, "comparador"));
                         i++;
                         continue;
                     }
-                    else AllTokens.Add(new Token(TokenType.igual, " "));
+                    else AllTokens.Add(new Token(TokenType.igual, "comparador"));
                     continue;
                 }//AQUI TENGO Q PONER UNA EXCEPTION XQ EL SIGNO = SERIA EL ULTIMO TOKEN Y EL ULTIMO SIEMPRE TIENE Q SER ;
             }
@@ -52,11 +57,11 @@ public class Tokenizador
                 {
                     if (a[i + 1] == '=')
                     {
-                        AllTokens.Add(new Token(TokenType.desigual, " "));
+                        AllTokens.Add(new Token(TokenType.desigual, "comparador"));
                         i++;
                         continue;
                     }
-                    else AllTokens.Add(new Token(TokenType.negacion, " "));
+                    else AllTokens.Add(new Token(TokenType.negacion, "comparador"));
                     continue;
                 }//AQUI TENGO Q PONER UNA EXCEPTION XQ EL SIGNO ! SERIA EL ULTIMO TOKEN Y EL ULTIMO SIEMPRE TIENE Q SER ;
             }
@@ -66,11 +71,11 @@ public class Tokenizador
                 {
                     if (a[i + 1] == '=')
                     {
-                        AllTokens.Add(new Token(TokenType.menorIgual, " "));
+                        AllTokens.Add(new Token(TokenType.menorIgual, "comparador"));
                         i++;
                         continue;
                     }
-                    else AllTokens.Add(new Token(TokenType.menor, " "));
+                    else AllTokens.Add(new Token(TokenType.menor, "comparador"));
                     continue;
                 }
                 //AQUI TENGO Q PONER UNA EXCEPTION XQ EL SIGNO < SERIA EL ULTIMO TOKEN Y EL ULTIMO SIEMPRE TIENE Q SER ;
@@ -81,52 +86,74 @@ public class Tokenizador
                     {
                         if (a[i + 1] == '=')
                         {
-                            AllTokens.Add(new Token(TokenType.mayorIgual, " "));
+                            AllTokens.Add(new Token(TokenType.mayorIgual, "comaprador"));
                             i++;
                             continue;
                         }
-                        else AllTokens.Add(new Token(TokenType.mayor, " "));
+                        else AllTokens.Add(new Token(TokenType.mayor, "comparador"));
                         continue;
                     }//AQUI TENGO Q PONER UNA EXCEPTION XQ EL SIGNO > SERIA EL ULTIMO TOKEN Y EL ULTIMO SIEMPRE TIENE Q SER ;            
                 }
+            if(a[i]=='|'&& i<a.Length-1)
+            {
+                if(a[i+1]=='|')
+                {
+                    AllTokens.Add(new Token(TokenType.or,""));
+                    i++;
+                    continue;
+                }
+                //PONER ERROR '|' NO ES UNA EXPRESION VALIDA
+            }
+            if(a[i]=='|')//Poner error xq ; no seria el ultimo token   
+            if(a[i]=='&'&& i<a.Length-1)
+            {
+                if(a[i+1]=='&')
+                {
+                    AllTokens.Add(new Token(TokenType.and,""));
+                    i++;
+                    continue;
+                }
+                //PONER ERROR '|' NO ES UNA EXPRESION VALIDA
+            }
+            if(a[i]=='&')//Poner error xq ; no seria el ultimo token              
             if (a[i] == '+')
             {
-                AllTokens.Add(new Token(TokenType.suma, " "));
+                AllTokens.Add(new Token(TokenType.suma, "operador"));
                 continue;
             }
             if (a[i] == '-')
             {
-                AllTokens.Add(new Token(TokenType.resta, " "));
+                AllTokens.Add(new Token(TokenType.resta, "operador"));
                 continue;
             }
             if (a[i] == '*')
             {
-                AllTokens.Add(new Token(TokenType.multiplicacion, " "));
+                AllTokens.Add(new Token(TokenType.multiplicacion, "operador"));
                 continue;
             }
             if (a[i] == '/')
             {
-                AllTokens.Add(new Token(TokenType.division, " "));
+                AllTokens.Add(new Token(TokenType.division, "operador"));
                 continue;
             }
             if (a[i] == '%')
             {
-                AllTokens.Add(new Token(TokenType.modulo, " "));
+                AllTokens.Add(new Token(TokenType.modulo, "operador"));
                 continue;
             }
-            /*if (a[i] == '.')
+            if (a[i] == '^')
             {
-                AllTokens.Add(new Token("punto", " "));
+                AllTokens.Add(new Token(TokenType.Pow, "Operadores"));
                 continue;
-            }*/
+            }            
             if (a[i] == ',')
             {
-                AllTokens.Add(new Token(TokenType.coma, " "));
+                AllTokens.Add(new Token(TokenType.coma, "separador"));
                 continue;
             }
             if (a[i] == ';')
             {
-                AllTokens.Add(new Token(TokenType.puntoYcoma, " "));
+                AllTokens.Add(new Token(TokenType.puntoYcoma, "separador"));
                 continue;
             }
             if (a[i] == '"')
@@ -218,7 +245,15 @@ public class Tokenizador
                         }
                         else if (a[j] == ' ' || a[j] == ';' || a[j] == '(' || a[j] == ')' || a[j] == '+' || a[j] == '-' || a[j] == '*' || a[j] == '/' || a[j] == ',' || a[j] == '=')
                         {
-                            AllTokens.Add(new Token(TokenType.identificador, valor));
+                            if (valor == "print") AllTokens.Add(new Token(TokenType.print, ""));
+                            else if (valor == "funtion") AllTokens.Add(new Token(TokenType.funtion, ""));
+                            else if (valor == "let") AllTokens.Add(new Token(TokenType.Let, ""));
+                            else if (valor == "in") AllTokens.Add(new Token(TokenType.In, ""));
+                            else if (valor == "True") AllTokens.Add(new Token(TokenType.True, ""));
+                            else if (valor == "False") AllTokens.Add(new Token(TokenType.False, ""));
+                            else if (valor == "PI") AllTokens.Add(new Token(TokenType.PI, "constante"));
+                            else if (valor == "Euler") AllTokens.Add(new Token(TokenType.Euler, "constante"));
+                            else { AllTokens.Add(new Token(TokenType.identificador, valor)); }
                             i = j - 1;
                             break;
                         }
@@ -232,5 +267,3 @@ public class Tokenizador
         }
     }
 }
-
-
