@@ -6,9 +6,11 @@ class Program
     {
         while (true)
         {
-            System.Console.Write(">");
             Tokenizador a = new Tokenizador(System.Console.ReadLine());
-            Parser b = new Parser(a.AllTokens);
-        }
+            foreach (Token b in a.AllTokens)
+            {
+                System.Console.WriteLine("{0} : {1},",b.tipo,b.valor);
+            }
+        }  
     }
 }

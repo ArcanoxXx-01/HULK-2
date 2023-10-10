@@ -115,15 +115,15 @@ public class Tokenizador
                 }
                 //PONER ERROR '|' NO ES UNA EXPRESION VALIDA
             }
-            if(a[i]=='&')//Poner error xq ; no seria el ultimo token              
-            if (a[i] == '+')
-            {
-                AllTokens.Add(new Token(TokenType.suma, "operador"));
-                continue;
-            }
+            //if (a[i]=='&')//Poner error xq ; no seria el ultimo token  
             if (a[i] == '-')
             {
                 AllTokens.Add(new Token(TokenType.resta, "operador"));
+                continue;
+            }
+            if (a[i] == '+')
+            {
+                AllTokens.Add(new Token(TokenType.suma, "operador"));
                 continue;
             }
             if (a[i] == '*')
