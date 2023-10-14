@@ -96,7 +96,7 @@ public class Parser
 
             Consume(TokenType.Flechita, "Expect '=>' to declare the function");
 
-            Funciones.Nullfunctions(name);
+            Funciones.FuncionReservada(name);
 
             Expresion funcionCuerpo = Expression();
             // if (match(TokenType.PuntoYComa))
@@ -126,12 +126,10 @@ public class Parser
 
         return null!;
     }
-    
     private Expresion Expression()
     {
         return Logica();
     }
-
     private Expresion Logica()
     {
         Expresion expr = Igualdad();
@@ -149,7 +147,6 @@ public class Parser
 
         return expr;
     }
-
     private Expresion Igualdad()
     {
 
@@ -168,7 +165,6 @@ public class Parser
 
         return expr;
     }
-
     private Expresion Comparasion()
     {
         Expresion expr = Concatenar();
@@ -186,7 +182,6 @@ public class Parser
 
         return expr;
     }
-
     private Expresion Concatenar()
     {
         Expresion expr = Suma_Resta();
@@ -280,7 +275,6 @@ public class Parser
         }
         return IF_LET();
     }
-
     private Expresion IF_LET()
     {
         if (Match(TokenType.If))
@@ -351,7 +345,6 @@ public class Parser
 
         return Primaria();
     }
-
     private List<Expresion.ExprAsignar> Asign()
     {
         List<Expresion.ExprAsignar> answer = new ();
@@ -373,7 +366,6 @@ public class Parser
 
         return answer;
     }
-
     private Expresion Primaria()
     {
         if (Match(TokenType.False))

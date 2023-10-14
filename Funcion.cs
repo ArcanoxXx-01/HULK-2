@@ -26,18 +26,18 @@ public class Funciones
         throw new Exception("Error mango");
     }
     
-    public static void Nullfunctions(string name)
+    public static void FuncionReservada(string name)
     {
-        Expresion.Funcion funcion=new Expresion.Funcion();
+        Expresion.Funcion funcion=new();
         funciones.Add(name, funcion);
     }
     
-    public static void FuncionesEspeciales()
+    public static void CrearFuncionesReservadas()
     {
-        Nullfunctions("print");
-        Nullfunctions("cos");
-        Nullfunctions("sen");
-        Nullfunctions("sqrt");
-        Nullfunctions("log");
+        FuncionReservada("print");
+        FuncionReservada("cos");
+        FuncionReservada("sen");
+        FuncionReservada("sqrt");
+        FuncionReservada("log");
     } 
 }
