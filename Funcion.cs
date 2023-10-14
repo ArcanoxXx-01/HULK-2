@@ -12,8 +12,7 @@ public class Funciones
     {
         foreach (var nombre in funciones)
         {
-            if (funciones.ContainsKey((string)name))
-                return true;
+            if (funciones.ContainsKey((string)name))return true;
         }
         return false;
     }
@@ -22,13 +21,12 @@ public class Funciones
     {
         foreach (var nombre in funciones)
         {
-            if (funciones.ContainsKey(name))
-                return funciones[name];
+            if (funciones.ContainsKey(name))return funciones[name];
         }
         throw new Exception("Error mango");
     }
     
-    public static void nullfunctions(string name)
+    public static void Nullfunctions(string name)
     {
         Expresion.Funcion funcion=new Expresion.Funcion();
         funciones.Add(name, funcion);
@@ -36,10 +34,10 @@ public class Funciones
     
     public static void FuncionesEspeciales()
     {
-        nullfunctions("print");
-        nullfunctions("cos");
-        nullfunctions("sen");
-        nullfunctions("sqrt");
-        nullfunctions("log");
+        Nullfunctions("print");
+        Nullfunctions("cos");
+        Nullfunctions("sen");
+        Nullfunctions("sqrt");
+        Nullfunctions("log");
     } 
 }

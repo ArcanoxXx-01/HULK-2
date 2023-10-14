@@ -96,9 +96,9 @@ public class Parser
 
             Consume(TokenType.Flechita, "Expect '=>' to declare the function");
 
-            Funciones.nullfunctions(name);
+            Funciones.Nullfunctions(name);
 
-            Expresion funcionCuerpo = expression();
+            Expresion funcionCuerpo = Expression();
             // if (match(TokenType.PuntoYComa))
 
             Consume(TokenType.PuntoYComa, "Expected ';' at the end of expression declaration after " + Anterior().Type + " " + Anterior().Value);
@@ -112,7 +112,7 @@ public class Parser
 
             return null!;
         }
-        Expresion expr = expression();
+        Expresion expr = Expression();
 
         Consume(TokenType.PuntoYComa, "Expected ';' at the end of expression declaration after " + Anterior().Type + " " + Anterior().Value);
 
@@ -126,14 +126,15 @@ public class Parser
 
         return null!;
     }
-    private Expresion expression()
+    
+    private Expresion Expression()
     {
-        return logical();
+        return Logica();
     }
 
-    private Expresion logical()
+    private Expresion Logica()
     {
-        Expresion expr = equality();
+        Expresion expr = Igualdad();
 
         TokenType[] a = { TokenType.And, TokenType.Or };
 
@@ -141,7 +142,7 @@ public class Parser
         {
             Token operador = Siguiente();
 
-            Expresion rigth = equality();
+            Expresion rigth = Igualdad();
 
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
@@ -149,10 +150,10 @@ public class Parser
         return expr;
     }
 
-    private Expresion equality()
+    private Expresion Igualdad()
     {
 
-        Expresion expr = comparison();
+        Expresion expr = Comparasion();
 
         TokenType[] a = { TokenType.IgualIgual, TokenType.NoIgual };
 
@@ -160,7 +161,7 @@ public class Parser
         {
             Token operador = Siguiente();
 
-            Expresion rigth = comparison();
+            Expresion rigth = Comparasion();
 
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
@@ -168,9 +169,9 @@ public class Parser
         return expr;
     }
 
-    private Expresion comparison()
+    private Expresion Comparasion()
     {
-        Expresion expr = concat();
+        Expresion expr = Concatenar();
 
         TokenType[] a = { TokenType.Mayor, TokenType.MayorIgual, TokenType.Menor, TokenType.MenorIgual };
 
@@ -178,7 +179,7 @@ public class Parser
         {
             Token operador = Siguiente();
 
-            Expresion rigth = concat();
+            Expresion rigth = Concatenar();
 
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
@@ -186,24 +187,24 @@ public class Parser
         return expr;
     }
 
-    private Expresion concat()
+    private Expresion Concatenar()
     {
-        Expresion expr = Term();
+        Expresion expr = Suma_Resta();
 
         while (Match(TokenType.Concatenar))
         {
             Token operador = Siguiente();
 
-            Expresion rigth = Term();
+            Expresion rigth = Suma_Resta();
 
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
 
         return expr;
     }
-    private Expresion Term()
+    private Expresion Suma_Resta()
     {
-        Expresion expr = factor();
+        Expresion expr = Multiplicacion_Division();
 
         TokenType[] a = { TokenType.Resta, TokenType.Suma };
 
@@ -211,16 +212,16 @@ public class Parser
         {
             Token operador = Siguiente();
 
-            Expresion rigth = factor();
+            Expresion rigth = Multiplicacion_Division();
 
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
 
         return expr;
     }
-    private Expresion factor()
+    private Expresion Multiplicacion_Division()
     {
-        Expresion expr = pow();
+        Expresion expr = Potencia();
 
         TokenType[] a = { TokenType.Division, TokenType.Multiplicacion };
 
@@ -228,45 +229,44 @@ public class Parser
         {
             Token operador = Siguiente();
 
-            Expresion rigth = pow();
+            Expresion rigth = Potencia();
 
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
 
         return expr;
     }
-    private Expresion pow()
+    private Expresion Potencia()
     {
-        Expresion expr = mod();
+        Expresion expr = Modulo();
 
         while (Match(TokenType.Pow))
         {
             Token operador = Siguiente();
 
-            Expresion rigth = mod();
+            Expresion rigth = Modulo();
 
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
 
         return expr;
     }
-    private Expresion mod()
+    private Expresion Modulo()
     {
-        Expresion expr = unary();
+        Expresion expr = Unaria();
 
         while (Match(TokenType.Modulo))
         {
             Token operador = Siguiente();
 
-            Expresion rigth = unary();
+            Expresion rigth = Unaria();
 
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
 
         return expr;
     }
-
-    private Expresion unary()
+    private Expresion Unaria()
     {
         TokenType[] a = { TokenType.Resta, TokenType.Negacion };
 
@@ -274,27 +274,26 @@ public class Parser
         {
             Token operador = Siguiente();
 
-            Expresion rigth = unary();
+            Expresion rigth = Unaria();
 
             return new Expresion.ExprUnaria(operador, rigth);
         }
-
-        return IFORLET();
+        return IF_LET();
     }
 
-    private Expresion IFORLET()
+    private Expresion IF_LET()
     {
         if (Match(TokenType.If))
         {
             current++;
 
-            Expresion condicion = primary();
+            Expresion condicion = Primaria();
 
-            Expresion ifcuerpo = expression();
+            Expresion ifcuerpo = Expression();
 
             Consume(TokenType.Else, "Expect 'else' after if statement");
 
-            Expresion elsecuerpo = expression();
+            Expresion elsecuerpo = Expression();
 
             Expresion expr = new Expresion.If(condicion, ifcuerpo, elsecuerpo);
 
@@ -304,12 +303,12 @@ public class Parser
         if (Match(TokenType.Let))
         {
             current++;
-
+            //aqui revisar por si acaso
             List<Expresion.ExprAsignar> letCuerpo = Asign();
 
             Consume(TokenType.In, "Expected 'in' after arguments in let-in statement");
 
-            Expresion inCuerpo = expression();
+            Expresion inCuerpo = Expression();
 
             return new Expresion.LetIn(letCuerpo, inCuerpo);
         }
@@ -328,7 +327,7 @@ public class Parser
 
                 while (!Match(a))
                 {
-                    Expresion expresion = expression();
+                    Expresion expresion = Expression();
 
                     if (!Match(TokenType.ParentesisCerrado))
                     {
@@ -350,7 +349,7 @@ public class Parser
             return expr;
         }
 
-        return primary();
+        return Primaria();
     }
 
     private List<Expresion.ExprAsignar> Asign()
@@ -363,7 +362,7 @@ public class Parser
 
             Consume(TokenType.Igual, "Expected '=' before expression" + Actual().Type + " " + Actual().Value + " in the let-in declaration");
 
-            Expresion expr = expression();
+            Expresion expr = Expression();
 
             if (!Match(TokenType.In))
 
@@ -375,7 +374,7 @@ public class Parser
         return answer;
     }
 
-    private Expresion primary()
+    private Expresion Primaria()
     {
         if (Match(TokenType.False))
         {
@@ -416,13 +415,14 @@ public class Parser
         {
             current++;
 
-            Expresion expr = expression();
+            Expresion expr = Expression();
 
             Consume(TokenType.ParentesisCerrado, "Missing ) after expression " + Anterior().Type + " " + Anterior().Value);
 
             return expr;
         }
         if (Match(TokenType.Final)) return null!;
+        //poner error
         errores.Add(new ERROR(ERROR.ErrorType.SyntaxError, "Invalid syntax in " + Actual().Type + " " + Actual().Value));
         return null!;
     }

@@ -3,6 +3,7 @@ namespace HULK;
 public class Evaluador
 {
     public Expresion Parser;
+
     public Evaluador(Expresion parser)
     {
         Parser = parser;
@@ -13,41 +14,35 @@ public class Evaluador
     }
     public static object GetValue(Expresion expr, Dictionary<object, object> asig)
     {
-        if (expr is Expresion.ExprUnaria)
+        if (expr is Expresion.ExprUnaria unaria)
         {
-            Expresion.ExprUnaria unaria = (Expresion.ExprUnaria)expr;
-            return unaria.VisitExprUnaria(GetValue(unaria.Derecha, asig));
+            return unaria.EvaluarExprUnaria(GetValue(unaria.Derecha, asig));
         }
 
-        if (expr is Expresion.ExprBinaria)
+        if (expr is Expresion.ExprBinaria binaria)
         {
-            Expresion.ExprBinaria binaria = (Expresion.ExprBinaria)expr;
-            return binaria.VisitExprBinaria(GetValue(binaria.Izquierda, asig), GetValue(binaria.Derecha, asig));
+            return binaria.EvaluarBinaria(GetValue(binaria.Izquierda, asig), GetValue(binaria.Derecha, asig));
         }
 
-        if (expr is Expresion.ExprLiteral)
+        if (expr is Expresion.ExprLiteral literal)
         {
-            Expresion.ExprLiteral literal = (Expresion.ExprLiteral)expr;
-            return literal.VisitExprLiteral(literal);
+            return literal.EvaluarExprLiteral(literal);
         }
 
-        if (expr is Expresion.If)
+        if (expr is Expresion.If If)
         {
-            Expresion.If If = (Expresion.If)expr;
-            return If.VisitExprIF(GetValue(If.Condicion, asig), GetValue(If.IfCuerpo, asig), GetValue(If.ElseCuerpo, asig));
+            return If.EvaluarExprIF(GetValue(If.Condicion, asig), GetValue(If.IfCuerpo, asig), GetValue(If.ElseCuerpo, asig));
         }
 
-        if (expr is Expresion.LetIn)
+        if (expr is Expresion.LetIn let)
         {
-            Expresion.LetIn let = (Expresion.LetIn)expr;
             Dictionary<object, object> answ = DictLetIn(let.LetCuerpo);
             return GetValue(let.InCuerpo, answ);
         }
 
-        if (expr is Expresion.ExprVariable)
+        if (expr is Expresion.ExprVariable variable)
         {
-            Expresion.ExprVariable variable = (Expresion.ExprVariable)expr;
-            return variable.VisitExprVariable(asig, variable.Nombre);
+            return variable.EvaluarExprVariable(asig, variable.Nombre);
         }
 
         if (expr is Expresion.Funcion)
@@ -55,17 +50,16 @@ public class Evaluador
             return "la funcion ha sido declarada correctamente";
         }
 
-        if (expr is Expresion.ExprLLamadaFuncion)
+        if (expr is Expresion.ExprLLamadaFuncion call)
         {
-            Expresion.ExprLLamadaFuncion call = (Expresion.ExprLLamadaFuncion)expr;
-            return call.VisitExprLlamada(call, asig);
+            return call.EvaluarExprLlamada(call, asig);
         }
 
         return null!;
     }
     private static Dictionary<object, object> DictLetIn(List<Expresion.ExprAsignar> asignar)
     {
-        Dictionary<object, object> resp = new Dictionary<object, object>();
+        Dictionary<object, object> resp = new();
 
         foreach (var expresion in asignar)
         {
@@ -73,10 +67,8 @@ public class Evaluador
             {
                 throw new Exception("Ya se le ha asignado un valor a" + expresion.Nombre.Value);
             }
-
             else resp.Add(expresion.Nombre.Value, GetValue(expresion.Valor, resp));
         }
-
         return resp;
     }
 
