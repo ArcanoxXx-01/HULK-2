@@ -73,7 +73,7 @@ public class Parser
             
             string name = (string)nombre.Value;
 
-            if (Funciones.ContainsFuncion(name))
+            if (Funciones.ContieneFuncion(name))
             {
                 errores.Add(new ERROR(ERROR.ErrorType.SyntaxError, "function " + name + " cannot be redefined"));
             }
@@ -309,7 +309,7 @@ public class Parser
 
         if (Match(TokenType.Identificador))
         {
-            if (Funciones.ContainsFuncion(Actual().Value))
+            if (Funciones.ContieneFuncion(Actual().Value))
             {
                 string name = (string)Siguiente().Value;
 

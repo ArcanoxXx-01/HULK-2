@@ -8,7 +8,7 @@ public class Funciones
         funciones.Add(name, funcion);
     }
     
-    public static bool ContainsFuncion(object name)
+    public static bool ContieneFuncion(object name)
     {
         foreach (var nombre in funciones)
         {
@@ -32,7 +32,7 @@ public class Funciones
         funciones.Add(name, funcion);
     }
     
-    public static void CrearFuncionesReservadas()
+        public static void CrearFuncionesReservadas()
     {
         FuncionReservada("print");
         FuncionReservada("cos");

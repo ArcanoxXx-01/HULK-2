@@ -4,7 +4,7 @@ class Program
   static void Main(string[] args)
   {
 
-    Funciones.FuncionesEspeciales();
+    Funciones.CrearFuncionesReservadas();
     while (true)
     {
       System.Console.Write(">");
