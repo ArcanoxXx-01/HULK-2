@@ -1,16 +1,13 @@
 namespace HULK;
 public class Token
 {
-    public TokenType tipo ;
-    public string valor ;
-
-    public Token(TokenType tipo, string valor)
+    public TokenType Type;
+    public string Grupo;
+    public object Value;
+    public Token(TokenType type, string grupo, object value)
     {
-        this.tipo = tipo;
-        this.valor = valor;
-    }
-    public Token Clonar()
-    {
-        return new Token(tipo, valor);
+        Type = type;
+        Grupo = grupo;
+        Value = value;
     }
 }

@@ -1,213 +1,429 @@
-using System.Linq.Expressions;
-using System.Reflection.Metadata.Ecma335;
-
 namespace HULK;
 public class Parser
 {
+
     public List<Token> Tokens;
+    private int current = 0;
+    public List<ERROR> errores = new ();
 
-    //Posicion de Tokens en la que estoy parado 
-    private int actual = 0;
 
-    //constructor
     public Parser(List<Token> tokens)
     {
         Tokens = tokens;
+        Parsear();
     }
 
-    //En la posicion actual va a ver que tipo de expresion es y la va a construir
-    private Expresion Parsear()
-    {
-        return Logica();
-    }
 
-    private bool Match(TokenType[] posibleTipo)
+    //Comprueba si el tipo del Token en el que estoy parado es uno de los que le paso como parametro
+    private bool Match(TokenType[] types)
     {
-        for (int i = 0; i < posibleTipo.Length; i++)
+        for (int i = 0; i < types.Length; i++)
         {
-            if(Tokens[actual].tipo == TokenType.puntoYcoma)return false;
-            if(Tokens[actual].tipo == posibleTipo[i])
+            if (Actual().Type == types[i])
             {
-                Advance();
                 return true;
             }
         }
         return false;
     }
+        
+    //Comprueba si el tipo del Token en el que estoy parado es el mismo del que le paso como parametro
     private bool Match(TokenType type)
     {
-        if(Tokens[actual].tipo == TokenType.puntoYcoma)return false;
-        if(Tokens[actual].tipo == type)
-        {
-            Advance();
-            return true;
-        }
-        else return false;
+       return Actual().Type== type;
     }
-    //Retorna verdadero si el TokenType que se le inserta es del mismo tipo del que estamos parados en la lista
-    /*private bool Check(TokenType type)
+
+    //Si el token en el que estoy parado es el esperado lo devuelvo y adelanto en uno la posicion, sino creo un error
+    private Token Consume(TokenType type, string mensaje)
     {
-        if (Tokens[actual].tipo == TokenType.puntoYcoma) return false;
-        return Tokens[actual].tipo == type;
-    }*/
-    //Consume el token actual y lo devuelve 
-    private Token Advance()
-    {
-        if (Tokens[actual].tipo != TokenType.puntoYcoma)
-        {
-        actual++;
-        return Previous();
-        }
-        else throw new Exception();
+        if (Actual().Type == type) return Siguiente();
+
+        errores.Add(new ERROR(ERROR.ErrorType.SyntaxError, mensaje));
+
+        return null!;
     }
     
+    //Si no estoy en el final de la lista devuelvo el Token actual y aumento en uno la posicion
+    private Token Siguiente()
+    {
+        if (Actual().Type != TokenType.Final) current++;
+        return Anterior();
+    }
+
     //Retorna el Token en la posicion anterior
-    private Token Previous()
+    private Token Anterior()
     {
-        return Tokens[actual - 1];
+        return Tokens[current - 1];
     }
-
-    //Retorna verdadero si el Token es PuntoYComa , o sea que esta al final de la linea
-    /*private bool IAE()
-    {
-        return Tokens[current].tipo == TokenType.puntoYcoma;
-    }*/
-
+    
     //Retorna el token en la posicion actual
-    /*private Token Peek()
+    private Token Actual()
     {
-        return Tokens[actual];
-    }*/
-    private Expresion Logica()
+        return Tokens[current];
+    }
+
+    //Este metodo se encarga de recorrer la lista de tokens para crear la expresion que en caso de no tener errores  se va a evaluar
+    public Expresion Parsear()
     {
-        Expresion expr = Igualdad();
-        TokenType[] a = { TokenType.and, TokenType.or };
+        while (Match(TokenType.function))
+        {
+            current++;
+
+            Token nombre = Consume(TokenType.Identificador, "An identifier was expected as the function name");
+            
+            string name = (string)nombre.Value;
+
+            if (Funciones.ContainsFuncion(name))
+            {
+                errores.Add(new ERROR(ERROR.ErrorType.SyntaxError, "function " + name + " cannot be redefined"));
+            }
+
+            Consume(TokenType.ParentesisAbierto, "Expected '(' after expression " + Anterior().Type + " " + Anterior().Value);
+
+            List<object> argument = new List<object>();
+
+            while (Match(TokenType.Identificador))
+            {
+                argument.Add(Siguiente().Value);
+
+                if (!Match(TokenType.ParentesisCerrado))
+                {
+                    Consume(TokenType.Coma, "Expected ',' before expression " + Actual().Type + " " + Actual().Value);
+                }
+            }
+
+            Consume(TokenType.ParentesisCerrado, "Missing ')' after expression " + Anterior().Type + " " + Anterior().Value);
+
+            Consume(TokenType.Flechita, "Expect '=>' to declare the function");
+
+            Funciones.nullfunctions(name);
+
+            Expresion funcionCuerpo = expression();
+            // if (match(TokenType.PuntoYComa))
+
+            Consume(TokenType.PuntoYComa, "Expected ';' at the end of expression declaration after " + Anterior().Type + " " + Anterior().Value);
+
+            Expresion expres = new Expresion.Funcion(name, argument, funcionCuerpo);
+
+            if (Match(TokenType.Final))
+                return expres;
+
+            errores.Add(new ERROR(ERROR.ErrorType.SyntaxError, "Expression was not declared correctly after " + Anterior().Type + " " + Anterior().Value));
+
+            return null!;
+        }
+        Expresion expr = expression();
+
+        Consume(TokenType.PuntoYComa, "Expected ';' at the end of expression declaration after " + Anterior().Type + " " + Anterior().Value);
+
+        if (Match(TokenType.Final))
+
+            return expr;
+
+        else
+            errores.Add(new ERROR(ERROR.ErrorType.SyntaxError, "Expression was not declared correctly after " + Anterior().Type + " " + Anterior().Value));
+
+
+        return null!;
+    }
+    private Expresion expression()
+    {
+        return logical();
+    }
+
+    private Expresion logical()
+    {
+        Expresion expr = equality();
+
+        TokenType[] a = { TokenType.And, TokenType.Or };
+
         while (Match(a))
         {
-            Token operador = Advance();
-            Expresion rigth = Igualdad();
+            Token operador = Siguiente();
+
+            Expresion rigth = equality();
+
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
+
         return expr;
     }
-    private Expresion Igualdad()
+
+    private Expresion equality()
     {
-        Expresion expr = Comparacion();
-        TokenType[] a = { TokenType.dobleIgual, TokenType.desigual };
+
+        Expresion expr = comparison();
+
+        TokenType[] a = { TokenType.IgualIgual, TokenType.NoIgual };
+
         while (Match(a))
         {
-            Token operador = Advance();
-            Expresion rigth = Comparacion();
+            Token operador = Siguiente();
+
+            Expresion rigth = comparison();
+
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
+
         return expr;
     }
-    private Expresion Comparacion()
+
+    private Expresion comparison()
     {
-        Expresion expr = Concatenar();
-        TokenType[] a = { TokenType.mayor, TokenType.mayorIgual, TokenType.menor, TokenType.menorIgual };
+        Expresion expr = concat();
+
+        TokenType[] a = { TokenType.Mayor, TokenType.MayorIgual, TokenType.Menor, TokenType.MenorIgual };
+
         while (Match(a))
         {
-            Token operador = Advance();
-            Expresion rigth = Concatenar();
+            Token operador = Siguiente();
+
+            Expresion rigth = concat();
+
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
+
         return expr;
     }
-    private Expresion Concatenar()
+
+    private Expresion concat()
     {
-        Expresion expr=Suma_Resta();
-        while(Match(TokenType.Concatenar))
+        Expresion expr = Term();
+
+        while (Match(TokenType.Concatenar))
         {
-            Token operador=Advance();
-            Expresion rigth=Suma_Resta();
-            expr=new Expresion.ExprBinaria(expr, operador,rigth);
+            Token operador = Siguiente();
+
+            Expresion rigth = Term();
+
+            expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
+
         return expr;
     }
-    private Expresion Suma_Resta()
+    private Expresion Term()
     {
-        Expresion expr = Multiplicacion_Division();
-        TokenType[] a = { TokenType.suma, TokenType.resta};
+        Expresion expr = factor();
+
+        TokenType[] a = { TokenType.Resta, TokenType.Suma };
+
         while (Match(a))
         {
-            Token operador = Advance();
-            Expresion rigth = Multiplicacion_Division();
+            Token operador = Siguiente();
+
+            Expresion rigth = factor();
+
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
+
         return expr;
     }
-    private Expresion Multiplicacion_Division()
+    private Expresion factor()
     {
-        Expresion expr = Potencia();
-        TokenType[] a = { TokenType.multiplicacion, TokenType.division };
+        Expresion expr = pow();
+
+        TokenType[] a = { TokenType.Division, TokenType.Multiplicacion };
+
         while (Match(a))
         {
-            Token operador = Advance();
-            Expresion rigth = Potencia();
+            Token operador = Siguiente();
+
+            Expresion rigth = pow();
+
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
+
         return expr;
     }
-    private Expresion Potencia()
+    private Expresion pow()
     {
-        Expresion expr = Modulo();
+        Expresion expr = mod();
+
         while (Match(TokenType.Pow))
         {
-            Token operador = Advance();
-            Expresion rigth = Modulo();
+            Token operador = Siguiente();
+
+            Expresion rigth = mod();
+
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
+
         return expr;
     }
-    private Expresion Modulo()
+    private Expresion mod()
     {
-        Expresion expr = Unary();
-        while (Match(TokenType.modulo))
+        Expresion expr = unary();
+
+        while (Match(TokenType.Modulo))
         {
-            Token operador = Advance();
-            Expresion rigth = Unary();
+            Token operador = Siguiente();
+
+            Expresion rigth = unary();
+
             expr = new Expresion.ExprBinaria(expr, operador, rigth);
         }
+
         return expr;
     }
-    private Expresion Unary()
+
+    private Expresion unary()
     {
-        TokenType[] a = { TokenType.resta, TokenType.negacion };
+        TokenType[] a = { TokenType.Resta, TokenType.Negacion };
+
         while (Match(a))
         {
-            Token operador = Advance();
-            Expresion rigth = Unary();
+            Token operador = Siguiente();
+
+            Expresion rigth = unary();
+
             return new Expresion.ExprUnaria(operador, rigth);
         }
+
+        return IFORLET();
+    }
+
+    private Expresion IFORLET()
+    {
+        if (Match(TokenType.If))
+        {
+            current++;
+
+            Expresion condicion = primary();
+
+            Expresion ifcuerpo = expression();
+
+            Consume(TokenType.Else, "Expect 'else' after if statement");
+
+            Expresion elsecuerpo = expression();
+
+            Expresion expr = new Expresion.If(condicion, ifcuerpo, elsecuerpo);
+
+            return expr;
+        }
+
+        if (Match(TokenType.Let))
+        {
+            current++;
+
+            List<Expresion.ExprAsignar> letCuerpo = Asign();
+
+            Consume(TokenType.In, "Expected 'in' after arguments in let-in statement");
+
+            Expresion inCuerpo = expression();
+
+            return new Expresion.LetIn(letCuerpo, inCuerpo);
+        }
+
+        if (Match(TokenType.Identificador))
+        {
+            if (Funciones.ContainsFuncion(Actual().Value))
+            {
+                string name = (string)Siguiente().Value;
+
+                Consume(TokenType.ParentesisAbierto, "Expected '(' after expression " + Anterior().Type + " " + Anterior().Value);
+
+                TokenType[] a = { TokenType.Coma, TokenType.ParentesisCerrado };
+
+                List<Expresion> argument = new ();
+
+                while (!Match(a))
+                {
+                    Expresion expresion = expression();
+
+                    if (!Match(TokenType.ParentesisCerrado))
+                    {
+                        Consume(TokenType.Coma, "Expected ',' before expression " + Actual().Type + " " + Actual().Value);
+                    }
+
+                    argument.Add(expresion);
+                }
+
+                Consume(TokenType.ParentesisCerrado, "Missing ')' after expression " + Anterior().Type + " " + Anterior().Value);
+
+                Expresion.Funcion funcion = Funciones.GetFuncion(name);
+
+                return new Expresion.ExprLLamadaFuncion(name, argument, funcion);
+            }
+
+            Expresion.ExprVariable expr = new (Siguiente());
+
+            return expr;
+        }
+
         return primary();
     }
+
+    private List<Expresion.ExprAsignar> Asign()
+    {
+        List<Expresion.ExprAsignar> answer = new ();
+
+        while (!Match(TokenType.In))
+        {
+            Token nombre = Siguiente();
+
+            Consume(TokenType.Igual, "Expected '=' before expression" + Actual().Type + " " + Actual().Value + " in the let-in declaration");
+
+            Expresion expr = expression();
+
+            if (!Match(TokenType.In))
+
+                Consume(TokenType.Coma, "Expected ',' before expression " + Actual().Type + " : " + Actual().Value);
+
+            answer.Add(new Expresion.ExprAsignar(nombre, expr));
+        }
+
+        return answer;
+    }
+
     private Expresion primary()
     {
         if (Match(TokenType.False))
         {
+            current++;
+
             return new Expresion.ExprLiteral(false);
         }
+
         if (Match(TokenType.True))
         {
+            current++;
+
             return new Expresion.ExprLiteral(true);
         }
-        TokenType[] a = { TokenType.numero, TokenType.String };
+
+        if (Match(TokenType.PI))
+        {
+            current++;
+
+            return new Expresion.ExprLiteral(Math.PI);
+        }
+
+        if (Match(TokenType.EULER))
+        {
+            current++;
+
+            return new Expresion.ExprLiteral(Math.E);
+        }
+
+        TokenType[] a = { TokenType.Number, TokenType.String };
+
         if (Match(a))
         {
-            return new Expresion.ExprLiteral(Advance().valor);
+            return new Expresion.ExprLiteral(Siguiente().Value);
         }
-        if (Match(TokenType.parentesisAbierto))
+
+        if (Match(TokenType.ParentesisAbierto))
         {
-            Expresion expr = Parsear();
-            Consume(TokenType.parentesisCerrado, "Se esperaba  de  expresion");
-            return new Expresion.ExprGrouping(expr);
+            current++;
+
+            Expresion expr = expression();
+
+            Consume(TokenType.ParentesisCerrado, "Missing ) after expression " + Anterior().Type + " " + Anterior().Value);
+
+            return expr;
         }
-        throw new Exception("");
-    }
-    private Token Consume(TokenType type, string mensaje)
-    {
-        if (Tokens[actual].tipo != TokenType.puntoYcoma && Tokens[actual].tipo == type) return Advance();
-        throw new Exception(" Error");
+        if (Match(TokenType.Final)) return null!;
+        errores.Add(new ERROR(ERROR.ErrorType.SyntaxError, "Invalid syntax in " + Actual().Type + " " + Actual().Value));
+        return null!;
     }
 }

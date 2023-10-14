@@ -1,8 +1,7 @@
-using System.Diagnostics.Contracts;
-
 namespace HULK;
 public abstract class Expresion
 {
+
     public class ExprUnaria : Expresion
     {
         public Token Token;
@@ -14,7 +13,7 @@ public abstract class Expresion
         }
         public object VisitExprUnaria(object derecha)
         {
-            if (Token.tipo == TokenType.resta)
+            if (Token.Type == TokenType.Resta)
             {
                 if (derecha is double)
                 {
@@ -22,7 +21,7 @@ public abstract class Expresion
                 }
                 throw new Exception("El Operador '-' no puede usarse delante de" + " " + derecha);
             }
-            if (Token.tipo == TokenType.negacion)
+            if (Token.Type == TokenType.Negacion)
             {
                 if (derecha is bool)
                 {
@@ -46,63 +45,63 @@ public abstract class Expresion
         }
         public object VisitExprBinaria(object izquierda, object derecha)
         {
-            if (Operador.tipo == TokenType.dobleIgual)
+            if (Operador.Type == TokenType.IgualIgual)
             {
                 return IgualIgual(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.desigual)
+            if (Operador.Type == TokenType.NoIgual)
             {
                 return NoIgual(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.menorIgual)
+            if (Operador.Type == TokenType.MenorIgual)
             {
                 return MenorIgual(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.mayorIgual)
+            if (Operador.Type == TokenType.MayorIgual)
             {
                 return MayorIgual(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.menor)
+            if (Operador.Type == TokenType.Menor)
             {
                 return Menor(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.mayor)
+            if (Operador.Type == TokenType.Mayor)
             {
                 return Mayor(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.and)
+            if (Operador.Type == TokenType.And)
             {
                 return And(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.or)
+            if (Operador.Type == TokenType.Or)
             {
                 return Or(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.suma)
+            if (Operador.Type == TokenType.Suma)
             {
                 return Suma(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.resta)
+            if (Operador.Type == TokenType.Resta)
             {
                 return Resta(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.Concatenar)
+            if (Operador.Type == TokenType.Concatenar)
             {
                 return Concatenar(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.multiplicacion)
+            if (Operador.Type == TokenType.Multiplicacion)
             {
                 return Multiplicacion(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.division)
+            if (Operador.Type == TokenType.Division)
             {
                 return Division(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.Pow)
+            if (Operador.Type == TokenType.Pow)
             {
                 return Pow(izquierda, derecha);
             }
-            if (Operador.tipo == TokenType.modulo)
+            if (Operador.Type == TokenType.Modulo)
             {
                 return Modulo(izquierda, derecha);
             }
@@ -112,124 +111,146 @@ public abstract class Expresion
         {
             if (izquierda is double && derecha is double)
             {
-                if (izquierda == derecha) return true;
+                if ((double)izquierda == (double)derecha) return true;
                 else return false;
             }
             if (izquierda is bool && derecha is bool)
             {
-                if (izquierda == derecha) return true;
+                if ((bool)izquierda == (bool)derecha) return true;
                 else return false;
             }
             if (izquierda is string && derecha is string)
             {
-                if (izquierda == derecha) return true;
+                if ((string)izquierda == (string)derecha) return true;
                 else return false;
             }
-            else throw new Exception("No se puede efectuar la operacion '==' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            else throw new Exception("El Operador == no puede estar entre" + " " + izquierda + " " + derecha);
+
         }
         public object NoIgual(object izquierda, object derecha)
         {
             if (izquierda is double && derecha is double)
             {
-                if (izquierda != derecha) return true;
+                if ((double)izquierda != (double)derecha) return true;
                 else return false;
             }
             if (izquierda is bool && derecha is bool)
             {
-                if (izquierda != derecha) return true;
+                if ((bool)izquierda != (bool)derecha) return true;
                 else return false;
             }
             if (izquierda is string && derecha is string)
             {
-                if (izquierda != derecha) return true;
+                if ((string)izquierda != (string)derecha) return true;
                 else return false;
             }
-            else throw new Exception("No se puede efectuar la operacion '!=' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            else throw new Exception("El Operador != no puede estar entre" + " " + izquierda + " " + derecha);
         }
 
         public object MenorIgual(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda <= (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '<=' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is double && derecha is double)
+                return (double)izquierda <= (double)derecha;
+
+            else throw new Exception("El Operador <= no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object MayorIgual(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda >= (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '>=' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is double && derecha is double)
+                return (double)izquierda >= (double)derecha;
+
+            else throw new Exception("El Operador >= no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object Menor(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda < (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '<' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is double && derecha is double)
+                return (double)izquierda < (double)derecha;
+
+            else throw new Exception("El Operador < no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object Mayor(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda > (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '>' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is double && derecha is double)
+                return (double)izquierda > (double)derecha;
+
+            else throw new Exception("El Operador > no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object And(object izquierda, object derecha)
         {
-            if (izquierda is bool && derecha is bool)return (bool)izquierda && (bool)derecha;
-            throw new Exception("No se puede efectuar la operacion '&&' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is bool && derecha is bool)
+                return (bool)izquierda && (bool)derecha;
+
+            else throw new Exception("El Operador && no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object Or(object izquierda, object derecha)
         {
-            if (izquierda is bool && derecha is bool)return (bool)izquierda || (bool)derecha;
-            throw new Exception("No se puede efectuar la operacion '||' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is bool && derecha is bool)
+                return (bool)izquierda || (bool)derecha;
+
+            else throw new Exception("El Operador || no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object Suma(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda + (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '+' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is double && derecha is double)
+                return (double)izquierda + (double)derecha;
+            else throw new Exception("El Operador + no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object Resta(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda - (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '-' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is double && derecha is double)
+                return (double)izquierda - (double)derecha;
+            else throw new Exception("El Operador - no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object Multiplicacion(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda * (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '*' entre:" + " " + izquierda + " " + "y" + " " + derecha);
+            if (izquierda is double && derecha is double)
+                return (double)izquierda * (double)derecha;
+            else throw new Exception("El Operador * no puede estar entre" + " " + izquierda + " " + derecha);
         }
         public object Division(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda / (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '/' entre:" + " " + izquierda + " " + "y" + " " + derecha);        }
+            if (izquierda is double && derecha is double)
+                return (double)izquierda / (double)derecha;
+            else throw new Exception("El Operador / no puede estar entre" + " " + izquierda + " " + derecha);
+        }
         public object Pow(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return Math.Pow((double)izquierda, (double)derecha);
-            throw new Exception("No se puede efectuar la operacion '^' entre:" + " " + izquierda + " " + "y" + " " + derecha);        }
+            if (izquierda is double && derecha is double)
+                return Math.Pow((double)izquierda, (double)derecha);
+            else throw new Exception("El Operador ^ no puede estar entre" + " " + izquierda + " " + derecha);
+        }
         public object Modulo(object izquierda, object derecha)
         {
-            if (izquierda is double && derecha is double)return (double)izquierda % (double)derecha;
-            throw new Exception("No se puede efectuar la operacion '%' entre:" + " " + izquierda + " " + "y" + " " + derecha);        }
+            if (izquierda is double && derecha is double)
+                return (double)izquierda % (double)derecha;
+            else throw new Exception("El Operador + no puede estar entre" + " " + izquierda + " " + derecha);
+        }
         public object Concatenar(object izquierda, object derecha)
         {
-            string resultado="";
-            if(izquierda is string)
+            string resultado = "";
+            if (izquierda is string)
             {
-                resultado+=izquierda;
+                resultado += izquierda;
             }
-            if(izquierda is double)
+            if (izquierda is double)
             {
-                resultado+=(double)izquierda;
+                resultado += (double)izquierda;
             }
-            if(izquierda is bool)
+            if (izquierda is bool)
             {
-                resultado+=(bool)izquierda;
+                resultado += (bool)izquierda;
             }
-            if(derecha is string)
+            if (derecha is string)
             {
-                resultado+=derecha;
+                resultado += derecha;
             }
-            if(derecha is double)
+            if (derecha is double)
             {
-                resultado+=(double)derecha;
+                resultado += (double)derecha;
             }
-            if(derecha is bool)
+            if (derecha is bool)
             {
-                resultado+=(bool)derecha;
+                resultado += (bool)derecha;
             }
             return resultado;
         }
@@ -241,71 +262,195 @@ public abstract class Expresion
         {
             this.literal = literal;
         }
-        public object VisitEXprLiteral(ExprLiteral expr)
+        public object VisitExprLiteral(ExprLiteral expr)
         {
             return expr.literal;
         }
     }
-    class ExprAsignar : Expresion
+    public class ExprAsignar : Expresion
     {
         public Token Nombre;
         public Expresion Valor;
-        ExprAsignar(Token nombre, Expresion valor)
+        public ExprAsignar(Token nombre, Expresion valor)
         {
             Nombre = nombre;
             Valor = valor;
         }
     }
-    class ExprVariable : Expresion
+    public class ExprVariable : Expresion
     {
         public Token Nombre;
-        ExprVariable(Token nombre)
+        public ExprVariable(Token nombre)
         {
             Nombre = nombre;
         }
+        public object VisitExprVariable(Dictionary<object, object> asign, Token variable)
+        {
+            if (asign is null)
+                throw new Exception("Variable " + variable.Value + " no tiene un valor asignado");
+            foreach (var objecto in asign)
+            {
+                if (asign.ContainsKey(variable.Value))
+                    return asign[variable.Value];
+            }
+            throw new Exception("Variable " + variable.Value + " no tiene un valor asignado");
+        }
     }
-    class ExprLLamadaFuncion : Expresion
+    public class ExprLLamadaFuncion : Expresion
     {
         public string Identificador;
-        public List<Token> Argumento;
+        public List<Expresion> Argumento;
         public Funcion funcion;
-        ExprLLamadaFuncion(string identificador, List<Token> argumento, Funcion funcion)
+        public ExprLLamadaFuncion(string identificador, List<Expresion> argumento, Funcion funcion)
         {
             Identificador = identificador;
             Argumento = argumento;
             this.funcion = funcion;
         }
-
-    }
-    class If : Expresion
-    {
-        public Expresion Condicion;
-        public Expresion IfCuerpo;
-        public Expresion ElseCuerpo;
-        If(Expresion condicion, Expresion ifCuerpo, Expresion elseCuerpo)
+        public object VisitExprLlamada(ExprLLamadaFuncion call, Dictionary<object, object> valor)
         {
-            Condicion = condicion;
-            IfCuerpo = ifCuerpo;
-            ElseCuerpo = elseCuerpo;
+            Funcion funcion = call.funcion;
+
+            string name = call.Identificador;
+
+            List<Expresion> argument = call.Argumento;
+
+            switch (name)
+            {
+                case "sen":
+                    return Sen(argument, valor);
+
+                case "cos":
+                    return Cos(argument, valor);
+
+                case "print":
+                    return Print(argument, valor);
+
+                case "log":
+                    return Log(argument, valor);
+
+                case "sqrt":
+                    return Sqrt(argument, valor);
+
+                default:
+                    return VisitFuncion(call);
+            }
+        }
+        public object Sen(List<Expresion> argument, Dictionary<object, object> valor)
+        {
+            if (argument.Count == 1)
+            {
+                return Math.Sin((double)Evaluador.GetValue(argument[0], valor));
+            }
+            throw new Exception("La funcion sen no admite mas de un argumento");
+        }
+        public object Cos(List<Expresion> argument, Dictionary<object, object> valor)
+        {
+            if (argument.Count == 1)
+            {
+                return Math.Cos((double)Evaluador.GetValue(argument[0], valor));
+            }
+            throw new Exception("La funcion cos no admite mas de un argumento");
+        }
+        public object Sqrt(List<Expresion> argument, Dictionary<object, object> valor)
+        {
+            if (argument.Count == 1)
+            {
+                return Math.Sqrt((double)Evaluador.GetValue(argument[0], valor));
+            }
+            throw new Exception("La funcion sqrt no admite mas de un argumento");
+        }
+        public object Log(List<Expresion> argument, Dictionary<object, object> valor)
+        {
+            if (argument.Count == 1)
+            {
+                return Math.Log10((double)Evaluador.GetValue(argument[0], valor));
+            }
+            throw new Exception("La funcion log no admite mas de un argumento");
+        }
+        public object Print(List<Expresion> argument, Dictionary<object, object> valor)
+        {
+            if (argument.Count == 1)
+            {
+                return Evaluador.GetValue(argument[0], valor);
+            }
+
+            throw new Exception("Una declaracion de print solo recibe un argumento");
+        }
+        public object VisitFuncion(ExprLLamadaFuncion call)
+        {
+            Dictionary<object, object> asig = Funcion.VisitarFuncion(call.Argumento, call.funcion.Parametros);
+            return Evaluador.GetValue(call.funcion.Cuerpo, asig);
         }
     }
-    class Funcion : Expresion
+    public class Funcion : Expresion
     {
         public string Identificador;
-        public List<Token> Parametros;
+        public List<object> Parametros;
         public Expresion Cuerpo;
-        Funcion(string identificador, List<Token> parametros, Expresion cuerpo)
+        public Funcion(string identificador, List<object> parametros, Expresion cuerpo)
         {
             Identificador = identificador;
             Parametros = parametros;
             Cuerpo = cuerpo;
         }
+        public Funcion()
+        {
+            Identificador = null!;
+            Parametros = null!;
+            Cuerpo = null!;
+        }
+
+        public static Dictionary<object, object> VisitarFuncion(List<Expresion> argument, List<object> parametros)
+        {
+            if (argument.Count == parametros.Count)
+            {
+                int count = 0;
+                Dictionary<object, object> ValorDeLosParametros = new Dictionary<object, object>();
+                foreach (var x in argument)
+                {
+                    object valor = Evaluador.GetValue(x, ValorDeLosParametros);
+                    ValorDeLosParametros.Add(parametros[count], valor);
+                    count++;
+                }
+
+                return ValorDeLosParametros;
+            }
+
+            throw new Exception("La cantidad de argumentos que recibe la funcion no es la dada");
+        }
     }
-    class LetIn : Expresion
+    public class If : Expresion
     {
-        public Expresion LetCuerpo;
+        public Expresion Condicion;
+        public Expresion IfCuerpo;
+        public Expresion ElseCuerpo;
+        public If(Expresion condicion, Expresion ifCuerpo, Expresion elseCuerpo)
+        {
+            Condicion = condicion;
+            IfCuerpo = ifCuerpo;
+            ElseCuerpo = elseCuerpo;
+        }
+        public object VisitExprIF(object condicion, object ifCuerpo, object elseCuerpo)
+        {
+            if (condicion is bool)
+            {
+                bool Condicion = (bool)condicion;
+                if (Condicion == true)
+                {
+                    return ifCuerpo;
+                }
+                else return elseCuerpo;
+            }
+            throw new Exception("Error");
+        }
+    }
+
+    public class LetIn : Expresion
+    {
+        public List<ExprAsignar> LetCuerpo;
         public Expresion InCuerpo;
-        LetIn(Expresion letCuerpo, Expresion inCuerpo)
+        public LetIn(List<ExprAsignar> letCuerpo, Expresion inCuerpo)
         {
             LetCuerpo = letCuerpo;
             InCuerpo = inCuerpo;
