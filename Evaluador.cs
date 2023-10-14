@@ -47,7 +47,7 @@ public class Evaluador
 
         if (expr is Expresion.Funcion)
         {
-            return "la funcion ha sido declarada correctamente";
+            return " ";
         }
 
         if (expr is Expresion.ExprLLamadaFuncion call)
