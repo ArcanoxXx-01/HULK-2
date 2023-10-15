@@ -5,12 +5,13 @@ public class Lexer
 {
     public List<Token> AllTokens;
     public List<ERROR> errores;
+
     public Lexer(string input)
     {
         AllTokens = new List<Token>();
-        
+
         errores = new List<ERROR>();
-        
+
         MakeTokens(input);
     }
 
@@ -110,8 +111,8 @@ public class Lexer
 
                 else
                 {
-                    ERROR error = new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token");
-                    errores.Add(error);
+                    //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token");
+                    //errores.Add(error);
                     continue;
                 }
             }
@@ -127,7 +128,7 @@ public class Lexer
 
                 else
                 {
-                    ERROR error = new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token");
+                    //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token");
                     continue;
                 }
             }
@@ -206,8 +207,8 @@ public class Lexer
 
                     if (j == x.Length - 1 && x[j] != '"')
                     {
-                        ERROR error = new ERROR(ERROR.ErrorType.LexicalError, "String " + a + " was declared incorrectly");
-                        errores.Add(error);
+                        //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, "String " + a + " was declared incorrectly");
+                        //errores.Add(error);
                     }
 
                     continue;
@@ -266,15 +267,15 @@ public class Lexer
 
                 if (valido == false)
                 {
-                    ERROR error = new ERROR(ERROR.ErrorType.LexicalError, numero + " is not a valid token");
-                    errores.Add(error);
+                    //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, numero + " is not a valid token");
+                    //errores.Add(error);
                     continue;
                 }
 
                 if (ContadorDePuntos > 1)
                 {
-                    ERROR error = new ERROR(ERROR.ErrorType.LexicalError, "Number " + numero + " was declared incorrectly");
-                    errores.Add(error);
+                    //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, "Number " + numero + " was declared incorrectly");
+                    //errores.Add(error);
                     continue;
                 }
 
@@ -357,7 +358,7 @@ public class Lexer
                 continue;
             }
 
-            errores.Add(new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token"));
+            //errores.Add(new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token"));
         }
 
         AllTokens.Add(new Token(TokenType.Final, "", ""));

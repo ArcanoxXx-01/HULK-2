@@ -8,10 +8,11 @@ class Program
     while (true)
     {
       System.Console.Write(">");
-      string input = Console.ReadLine();
+      string input = Console.ReadLine()!;
       if (input == null!)
       {
-        continue;
+        Console.WriteLine("Se ha ingresado una linea vacia");
+        break;
       }
       else Run(input);
     }
@@ -20,28 +21,37 @@ class Program
   public static void Run(string input)
   {
     Lexer tokens = new (input);
-    
-    
-    if(tokens.errores.Count == 0)
+    /*foreach (var token in tokens.Tokens)
+    {
+      Console.WriteLine(token.Type + " " + token.Grupo + " " + token.Value);
+    }*/
+
+    if (tokens.errores.Count != 0)
+    {
+      foreach (var error in tokens.errores)
+      {
+        System.Console.WriteLine(error.Tipo + " " + error.Mensaje);
+      }
+    }
+
+    else
     {
       Parser parser = new (tokens.AllTokens);
 
       Expresion expresion = parser.Parsear();
 
-      foreach (var error in parser.errores)
-      {
-        System.Console.WriteLine(error.Tipo + " : " + error.Mensaje);
-      }
+      if (ERROR.hadError == true) return;
+
       Dictionary<object, object> xd = new ();
-    
-    }
-    else
-    {
-      foreach (var error in tokens.errores)
-      {
-        System.Console.WriteLine(error.Tipo + " : " + error.Mensaje);
-      }
+
+      Evaluador evaluador = new (expresion);
+
+      object respuesta = evaluador.Run(expresion, xd);
+
+      if(ERROR.hadError==true) return;
+
+      System.Console.WriteLine(respuesta);
+
     }
   }
 }
-

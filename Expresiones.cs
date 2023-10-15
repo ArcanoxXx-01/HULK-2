@@ -27,7 +27,7 @@ public abstract class Expresion
                 Dictionary<object, object> ValorDeLosParametros = new Dictionary<object, object>();
                 foreach (var x in argument)
                 {
-                    object valor = Evaluador.GetValue(x, ValorDeLosParametros);
+                    object valor = Evaluador.Evaluar(x, ValorDeLosParametros);
                     ValorDeLosParametros.Add(parametros[count], valor);
                     count++;
                 }
@@ -72,7 +72,7 @@ public abstract class Expresion
         {
             if (argument.Count == 1)
             {
-                return Math.Sin((double)Evaluador.GetValue(argument[0], valor));
+                return Math.Sin((double)Evaluador.Evaluar(argument[0], valor));
             }
             throw new Exception("La funcion sen no admite mas de un argumento");
         }
@@ -80,7 +80,7 @@ public abstract class Expresion
         {
             if (argument.Count == 1)
             {
-                return Math.Cos((double)Evaluador.GetValue(argument[0], valor));
+                return Math.Cos((double)Evaluador.Evaluar(argument[0], valor));
             }
             throw new Exception("La funcion cos no admite mas de un argumento");
         }
@@ -88,7 +88,7 @@ public abstract class Expresion
         {
             if (argument.Count == 1)
             {
-                return Math.Sqrt((double)Evaluador.GetValue(argument[0], valor));
+                return Math.Sqrt((double)Evaluador.Evaluar(argument[0], valor));
             }
             throw new Exception("La funcion sqrt no admite mas de un argumento");
         }
@@ -96,7 +96,7 @@ public abstract class Expresion
         {
             if (argument.Count == 1)
             {
-                return Math.Log10((double)Evaluador.GetValue(argument[0], valor));
+                return Math.Log10((double)Evaluador.Evaluar(argument[0], valor));
             }
             throw new Exception("La funcion log no admite mas de un argumento");
         }
@@ -104,7 +104,7 @@ public abstract class Expresion
         {
             if (argument.Count == 1)
             {
-                return Evaluador.GetValue(argument[0], valor);
+                return Evaluador.Evaluar(argument[0], valor);
             }
             //poner error
             throw new Exception("Una declaracion de print solo recibe un argumento");
@@ -112,7 +112,7 @@ public abstract class Expresion
         public object EvaluarFuncion(ExprLLamadaFuncion call)
         {
             Dictionary<object, object> asig = Funcion.VisitarFuncion(call.Argumento, call.funcion.Parametros);
-            return Evaluador.GetValue(call.funcion.Cuerpo, asig);
+            return Evaluador.Evaluar(call.funcion.Cuerpo, asig);
         }
     }
     public class ExprGrouping : Expresion
@@ -144,16 +144,16 @@ public abstract class Expresion
         public object EvaluarExprVariable(Dictionary<object, object> asign, Token variable)
         {
             //poner error en el if de abajo
-            if (asign is null)throw new Exception("Variable " + variable.Value + " no tiene un valor asignado");
-            
+            if (asign is null) throw new Exception("Variable " + variable.Value + " no tiene un valor asignado");
+
             foreach (var objecto in asign)
             {
-                if (asign.ContainsKey(variable.Value))return asign[variable.Value];
+                if (asign.ContainsKey(variable.Value)) return asign[variable.Value];
             }
             //poner error
             throw new Exception("Variable " + variable.Value + " no tiene un valor asignado");
         }
-    }   
+    }
     public class If : Expresion
     {
         public Expresion Condicion;
@@ -299,7 +299,7 @@ public abstract class Expresion
             }
             return null!;
         }
-        public object IgualIgual(object izquierda, object derecha)
+        public static object IgualIgual(object izquierda, object derecha)
         {
             if (izquierda is double I1 && derecha is double D1)
             {
@@ -317,10 +317,10 @@ public abstract class Expresion
                 else return false;
             }
             //poner error
-            else throw new Exception("El Operador == no puede estar entre" + " " + izquierda + " " + derecha);
-
+            //else throw new Exception("El Operador == no puede estar entre" + " " + izquierda + " " + derecha);
+            return -1;
         }
-        public object NoIgual(object izquierda, object derecha)
+        public static object NoIgual(object izquierda, object derecha)
         {
             if (izquierda is double I1 && derecha is double D1)
             {
@@ -337,87 +337,89 @@ public abstract class Expresion
                 if (I3 != D3) return true;
                 return false;
             }
-            throw new Exception("El Operador != no puede estar entre" + " " + izquierda + " " + derecha);
+            //throw new Exception("El Operador != no puede estar entre" + " " + izquierda + " " + derecha);
+            return -1;
         }
 
-        public object MenorIgual(object izquierda, object derecha)
+        public static object MenorIgual(object izquierda, object derecha)
         {
             if (izquierda is double I && derecha is double D) return I <= D;
             //poner error
-            throw new Exception("El Operador <= no puede estar entre" + " " + izquierda + " " + derecha);
+            //throw new Exception("El Operador <= no puede estar entre" + " " + izquierda + " " + derecha);
+            return -1;
         }
-        public object MayorIgual(object izquierda, object derecha)
+        public static object MayorIgual(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return v >= v1;
 
-            else throw new Exception("El Operador >= no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador >= no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Menor(object izquierda, object derecha)
+        public static object Menor(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return v < v1;
 
-            else throw new Exception("El Operador < no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador < no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Mayor(object izquierda, object derecha)
+        public static object Mayor(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return v > v1;
 
-            else throw new Exception("El Operador > no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador > no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object And(object izquierda, object derecha)
+        public static object And(object izquierda, object derecha)
         {
             if (izquierda is bool v && derecha is bool v1)
                 return v && v1;
 
-            else throw new Exception("El Operador && no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador && no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Or(object izquierda, object derecha)
+        public static object Or(object izquierda, object derecha)
         {
             if (izquierda is bool v && derecha is bool v1)
                 return v || v1;
 
-            else throw new Exception("El Operador || no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador || no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Suma(object izquierda, object derecha)
+        public static object Suma(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return v + v1;
-            else throw new Exception("El Operador + no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador + no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Resta(object izquierda, object derecha)
+        public static object Resta(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return v - v1;
-            else throw new Exception("El Operador - no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador - no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Multiplicacion(object izquierda, object derecha)
+        public static object Multiplicacion(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return v * v1;
-            else throw new Exception("El Operador * no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador * no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Division(object izquierda, object derecha)
+        public static object Division(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return v / v1;
-            else throw new Exception("El Operador / no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador / no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Pow(object izquierda, object derecha)
+        public static object Pow(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return Math.Pow(v, v1);
-            else throw new Exception("El Operador ^ no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador ^ no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Modulo(object izquierda, object derecha)
+        public static object Modulo(object izquierda, object derecha)
         {
             if (izquierda is double v && derecha is double v1)
                 return v % v1;
-            else throw new Exception("El Operador + no puede estar entre" + " " + izquierda + " " + derecha);
+            else return -1;//throw new Exception("El Operador + no puede estar entre" + " " + izquierda + " " + derecha);
         }
-        public object Concatenar(object izquierda, object derecha)
+        public static object Concatenar(object izquierda, object derecha)
         {
             string resultado = "";
             if (izquierda is string)
@@ -458,5 +460,5 @@ public abstract class Expresion
         {
             return expr.literal;
         }
-    } 
+    }
 }
