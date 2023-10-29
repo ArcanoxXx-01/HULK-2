@@ -7,9 +7,9 @@
 /home/dario/Desktop/HULK-2/bin/Debug/net6.0/HULK-2.deps.json
 /home/dario/Desktop/HULK-2/bin/Debug/net6.0/HULK-2.runtimeconfig.json
 /home/dario/Desktop/HULK-2/bin/Debug/net6.0/HULK-2.dll
-/home/dario/Desktop/HULK-2/bin/Debug/net6.0/ref/HULK-2.dll
 /home/dario/Desktop/HULK-2/bin/Debug/net6.0/HULK-2.pdb
 /home/dario/Desktop/HULK-2/obj/Debug/net6.0/HULK-2.dll
 /home/dario/Desktop/HULK-2/obj/Debug/net6.0/ref/HULK-2.dll
 /home/dario/Desktop/HULK-2/obj/Debug/net6.0/HULK-2.pdb
 /home/dario/Desktop/HULK-2/obj/Debug/net6.0/HULK-2.genruntimeconfig.cache
+/home/dario/Desktop/HULK-2/obj/Debug/net6.0/refint/HULK-2.dll

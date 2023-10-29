@@ -4,10 +4,10 @@ public class Token
     public TokenType Type;
     public string Grupo;
     public object Value;
-    public Token(TokenType type, string grupo, object value)
+    public Token(TokenType Type, string Grupo, object Value)
     {
-        Type = type;
-        Grupo = grupo;
-        Value = value;
+        this.Type = Type;
+        this.Grupo = Grupo;
+        this.Value = Value;;;;;;;;
     }
 }

@@ -3,6 +3,8 @@ namespace HULK;
 public class Evaluador
 {
     public Expresion Parser;
+
+    public static List<ERROR>errores=new();
     public Evaluador(Expresion parser)
     {
         Parser = parser;
@@ -16,30 +18,31 @@ public class Evaluador
     {
         if (expr is Expresion.ExprUnaria unaria)
         {
-            return unaria.EvaluarExprUnaria(Evaluar(unaria.Derecha, asig));
+            return unaria.VisitExprUnaria(Evaluar(unaria.Derecha, asig));
         }
 
         if (expr is Expresion.ExprBinaria binaria)
         {
-            return binaria.EvaluarBinaria(Evaluar(binaria.Izquierda, asig), Evaluar(binaria.Derecha, asig));
+            return binaria.VisitExprBinaria(Evaluar(binaria.izquierda, asig), Evaluar(binaria.derecha, asig));
         }
 
         if (expr is Expresion.ExprLiteral literal)
         {
-            return literal.EvaluarExprLiteral(literal);
+            return literal.EvaluarLiteral(literal);
         }
 
         if (expr is Expresion.If If)
         {
             object x = Evaluar(If.Condicion, asig);
-            if (x is not bool)
+            if ((x is not bool v))
             {
-                //throw new ERROR(ERROR.ErrorType.SemanticError," if condition must return a bool");
+                errores.Add(new ERROR(ERROR.Tipo.SemanticError, " if condition must return a bool"));
+                //throw new ERROR(ERROR.Tipo.SemanticError, " if condition must return a bool");
             }
 
             else
             {
-                if ((bool)x == true)
+                if (v == true)
                 {
                     return Evaluar(If.IfCuerpo, asig);
                 }
@@ -57,7 +60,7 @@ public class Evaluador
 
         if (expr is Expresion.ExprVariable variable)
         {
-            return variable.EvaluarExprVariable(asig, variable.Nombre);
+            return variable.EvaluarVariable(asig, variable.Nombre);
         }
 
         if (expr is Expresion.Funcion)
@@ -67,7 +70,7 @@ public class Evaluador
 
         if (expr is Expresion.ExprLLamadaFuncion call)
         {
-            return call.EvaluarExprLlamada(call, asig);
+            return call.EvaluarLlamada(call, asig);
         }
 
         return null!;
@@ -75,15 +78,15 @@ public class Evaluador
 
     private static Dictionary<object, object> DictLetIn(List<Expresion.ExprAsignar> asignar)
     {
-        Dictionary<object, object> resp = new ();
+        Dictionary<object, object> resp = new();
 
         foreach (var expresion in asignar)
         {
             if (resp.ContainsKey(expresion.Nombre.Value))
             {
-                //throw new ERROR("variable " + expresion.Nombre.Value+ " already has a value assigned");
+                errores.Add(new ERROR(ERROR.Tipo.SemanticError, " variable " + expresion.Nombre.Value + " already has a value assigned"));
+                //throw new ERROR(ERROR.Tipo.SemanticError, " variable " + expresion.Nombre.Value + " already has a value assigned");
             }
-
             else resp.Add(expresion.Nombre.Value, Evaluar(expresion.Valor, resp));
         }
         return resp;

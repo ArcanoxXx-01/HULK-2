@@ -6,13 +6,13 @@ public class Lexer
     public List<Token> AllTokens;
     public List<ERROR> errores;
 
-    public Lexer(string input)
+    public Lexer(string entrada)
     {
         AllTokens = new List<Token>();
 
         errores = new List<ERROR>();
 
-        MakeTokens(input);
+        MakeTokens(entrada);
     }
 
     public void MakeTokens(string x)
@@ -111,8 +111,8 @@ public class Lexer
 
                 else
                 {
-                    //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token");
-                    //errores.Add(error);
+                    ERROR error = new(ERROR.Tipo.LexicalError, x[i] + " is not a valid token");
+                    errores.Add(error);
                     continue;
                 }
             }
@@ -128,7 +128,7 @@ public class Lexer
 
                 else
                 {
-                    //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token");
+                    ERROR error = new(ERROR.Tipo.LexicalError, x[i] + " is not a valid token");
                     continue;
                 }
             }
@@ -191,6 +191,7 @@ public class Lexer
             if (x[i] == '"')
             {
                 string a = "";
+                
                 for (int j = i + 1; j < x.Length; j++)
                 {
 
@@ -207,20 +208,21 @@ public class Lexer
 
                     if (j == x.Length - 1 && x[j] != '"')
                     {
-                        //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, "String " + a + " was declared incorrectly");
-                        //errores.Add(error);
+                        ERROR error = new(ERROR.Tipo.LexicalError, "String " + a + " was declared incorrectly");
+                        errores.Add(error);
                     }
 
                     continue;
                 }
 
                 AllTokens.Add(new Token(TokenType.String, "Variables", a));
+                continue;
             }
 
             if (x[i] == '0' || x[i] == '1' || x[i] == '2' || x[i] == '3' || x[i] == '4' || x[i] == '5' || x[i] == '6' || x[i] == '7' || x[i] == '8' || x[i] == '9')
             {
                 string numero = "";
-                numero = numero + x[i];
+                numero += x[i];
                 int ContadorDePuntos = 0;
                 bool valido = true;
 
@@ -267,15 +269,15 @@ public class Lexer
 
                 if (valido == false)
                 {
-                    //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, numero + " is not a valid token");
-                    //errores.Add(error);
+                    ERROR error = new(ERROR.Tipo.LexicalError, numero + " is not a valid token");
+                    errores.Add(error);
                     continue;
                 }
 
                 if (ContadorDePuntos > 1)
                 {
-                    //ERROR error = new ERROR(ERROR.ErrorType.LexicalError, "Number " + numero + " was declared incorrectly");
-                    //errores.Add(error);
+                    ERROR error = new(ERROR.Tipo.LexicalError, "Number " + numero + " was declared incorrectly");
+                    errores.Add(error);
                     continue;
                 }
 
@@ -283,10 +285,10 @@ public class Lexer
                 continue;
             }
 
-            if (x[i] == '_' || x[i] == 'A' || x[i] == 'a' || x[i] == 'B' || x[i] == 'b' || x[i] == 'C' || x[i] == 'c' || x[i] == 'D' || x[i] == 'd' || x[i] == 'E' || x[i] == 'e' || x[i] == 'F' || x[i] == 'f' || x[i] == 'G' || x[i] == 'g' || x[i] == 'H' || x[i] == 'h' || x[i] == 'I' || x[i] == 'i' || x[i] == 'J' || x[i] == 'j' || x[i] == 'K' || x[i] == 'k' || x[i] == 'L' || x[i] == 'l' || x[i] == 'M' || x[i] == 'm' || x[i] == 'N' || x[i] == 'n' || x[i] == 'O' || x[i] == 'o' || x[i] == 'P' || x[i] == 'p' || x[i] == 'Q' || x[i] == 'q' || x[i] == 'R' || x[i] == 'r' || x[i] == 'S' || x[i] == 's' || x[i] == 'T' || x[i] == 't' || x[i] == 'U' || x[i] == 'u' || x[i] == 'V' || x[i] == 'v' || x[i] == 'W' || x[i] == 'W' || x[i] == 'X' || x[i] == 'x' || x[i] == 'Y' || x[i] == 'y' || x[i] == 'Z' || x[i] == 'z')
+            if (x[i] == 'A' || x[i] == 'a' || x[i] == 'B' || x[i] == 'b' || x[i] == 'C' || x[i] == 'c' || x[i] == 'D' || x[i] == 'd' || x[i] == 'E' || x[i] == 'e' || x[i] == 'F' || x[i] == 'f' || x[i] == 'G' || x[i] == 'g' || x[i] == 'H' || x[i] == 'h' || x[i] == 'I' || x[i] == 'i' || x[i] == 'J' || x[i] == 'j' || x[i] == 'K' || x[i] == 'k' || x[i] == 'L' || x[i] == 'l' || x[i] == 'M' || x[i] == 'm' || x[i] == 'N' || x[i] == 'n' || x[i] == 'O' || x[i] == 'o' || x[i] == 'P' || x[i] == 'p' || x[i] == 'Q' || x[i] == 'q' || x[i] == 'R' || x[i] == 'r' || x[i] == 'S' || x[i] == 's' || x[i] == 'T' || x[i] == 't' || x[i] == 'U' || x[i] == 'u' || x[i] == 'V' || x[i] == 'v' || x[i] == 'W' || x[i] == 'W' || x[i] == 'X' || x[i] == 'x' || x[i] == 'Y' || x[i] == 'y' || x[i] == 'Z' || x[i] == 'z')
             {
                 string a = "";
-                a = a + x[i];
+                a += x[i];
 
                 for (int j = i + 1; j < x.Length; j++)
                 {
@@ -358,9 +360,13 @@ public class Lexer
                 continue;
             }
 
-            //errores.Add(new ERROR(ERROR.ErrorType.LexicalError, x[i] + " is not a valid token"));
+            errores.Add(new(ERROR.Tipo.LexicalError, x[i] + " is not a valid token"));
         }
-
+        
         AllTokens.Add(new Token(TokenType.Final, "", ""));
+        if(AllTokens.Count<3)
+        {
+            errores.Add(new (ERROR.Tipo.LexicalError,"The expression entered is not defined in Hulk"));
+        }
     }
 }

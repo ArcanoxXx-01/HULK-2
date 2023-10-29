@@ -1,56 +1,53 @@
-﻿namespace HULK;
+﻿
+namespace HULK;
 class Program
 {
   static void Main(string[] args)
   {
+    Funciones.CrearReservadas();
 
-    Funciones.CrearFuncionesReservadas();
     while (true)
     {
-      System.Console.Write(">");
-      string input = Console.ReadLine()!;
-      if (input == null!)
-      {
-        Console.WriteLine("Se ha ingresado una linea vacia");
-        break;
-      }
-      else Run(input);
-    }
+      Console.Write(">");
 
+      string input = Console.ReadLine()!;
+
+      if (input.Length == 0)
+      {
+        Console.WriteLine("An empty line has been entered");
+      }
+      else
+      {
+        Run(input);
+      }
+
+    }
   }
   public static void Run(string input)
   {
-    Lexer tokens = new (input);
-    /*foreach (var token in tokens.Tokens)
-    {
-      Console.WriteLine(token.Type + " " + token.Grupo + " " + token.Value);
-    }*/
+    Lexer tokens = new(input);
 
     if (tokens.errores.Count != 0)
     {
       foreach (var error in tokens.errores)
       {
-        System.Console.WriteLine(error.Tipo + " " + error.Mensaje);
+        System.Console.WriteLine(error.type + " : " + error.mensaje);
       }
     }
-
     else
     {
-      Parser parser = new (tokens.AllTokens);
+      Parser parser = new(tokens.AllTokens);
 
       Expresion expresion = parser.Parsear();
 
-      if (ERROR.hadError == true) return;
+      Dictionary<object, object> value = new();
 
-      Dictionary<object, object> xd = new ();
+      Evaluador evaluador = new(expresion);
 
-      Evaluador evaluador = new (expresion);
+      object respuesta = evaluador.Run(expresion, value);
 
-      object respuesta = evaluador.Run(expresion, xd);
+      if(Evaluador.errores.Count==0)Console.WriteLine(respuesta);
 
-      if(ERROR.hadError==true) return;
-
-      System.Console.WriteLine(respuesta);
 
     }
   }

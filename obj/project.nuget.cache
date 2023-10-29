@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "ctuTvCCdLHKd1OUe8VdwRD7Kd4KEtnTcjrJboDc/5zkzygGA0vkQw+e2DT3ehYTtKMtAu6qUDWATrgMGfnz9Yg==",
+  "dgSpecHash": "w92onOTm+g66peK/+RPl+IAFY+IpopyPnfryJKcS/4NhtxbIwM3euIF+nXIVeNp31mh9UkF6uD2ocQi0d5aQUQ==",
   "success": true,
   "projectFilePath": "/home/dario/Desktop/HULK-2/HULK-2.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/dario/.nuget/packages/microsoft.netcore.app.host.linux-x64/6.0.23/microsoft.netcore.app.host.linux-x64.6.0.23.nupkg.sha512"
+  ],
   "logs": []
 }

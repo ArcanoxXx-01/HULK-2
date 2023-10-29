@@ -1,18 +1,20 @@
+
 namespace HULK;
 public class Funciones
 {
-    public static Dictionary<string, Expresion.Funcion> funciones = new();
+    private static Dictionary<string, Expresion.Funcion> funciones = new();
 
     public Funciones(string name, Expresion.Funcion funcion)
     {
         funciones.Add(name, funcion);
     }
 
-    public static bool ContieneFuncion(object name)
+    public static bool ContainsFuncion(object name)
     {
         foreach (var nombre in funciones)
         {
-            if (funciones.ContainsKey((string)name)) return true;
+            if (funciones.ContainsKey((string)name))
+                return true;
         }
         return false;
     }
@@ -21,24 +23,27 @@ public class Funciones
     {
         foreach (var nombre in funciones)
         {
-            if (funciones.ContainsKey(name)) return funciones[name];
+            if (funciones.ContainsKey(name))
+                return funciones[name];
         }
-        //throw new Exception("Error");
-        return null!;
+        throw new ERROR(ERROR.Tipo.SemanticError, " Function " + name + " is not defined");
     }
 
-    public static void FuncionReservada(string name)
+    public static void Reservadas(string name, Expresion.Funcion funcion = null!)
     {
-        Expresion.Funcion funcion = new();
-        funciones.Add(name, funcion);
+        if (funciones.ContainsKey(name))
+            funciones[name] = funcion;
+
+        else funciones.Add(name, funcion);
     }
 
-    public static void CrearFuncionesReservadas()
+    public static void CrearReservadas()
     {
-        FuncionReservada("print");
-        FuncionReservada("cos");
-        FuncionReservada("sen");
-        FuncionReservada("sqrt");
-        FuncionReservada("log");
+        Reservadas("print");
+        Reservadas("sin");
+        Reservadas("cos");
+        Reservadas("sqrt");
+        Reservadas("log");
     }
+
 }

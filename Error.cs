@@ -1,35 +1,25 @@
+
 namespace HULK;
 public class ERROR : Exception
 {
-    public enum ErrorType
+    public enum Tipo
     {
         LexicalError,
         SyntaxError,
         SemanticError,
     }
 
-    public string Mensaje;
-    public ErrorType Tipo;
-    public static bool hadError = false;
+    public string mensaje;
+    public Tipo type;
 
-    public ERROR(ErrorType type, string mensaje)
+    public ERROR(Tipo type, string mensaje)
     {
-        Tipo = type;
-        Mensaje = mensaje;
-        hadError = true;
-        if (type == ErrorType.SyntaxError)
+        this.type = type;
+        this.mensaje = mensaje;
+
+        if (type != Tipo.LexicalError)
         {
             System.Console.WriteLine(type + mensaje);
         }
-
-        if (type == ErrorType.SemanticError)
-        {
-            System.Console.WriteLine(type + mensaje);
-        }
-    }
-    public ERROR(string mensaje)
-    {
-        Mensaje = mensaje;
-        hadError = true;
     }
 }
