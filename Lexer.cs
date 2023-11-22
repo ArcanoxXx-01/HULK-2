@@ -1,8 +1,13 @@
 
 namespace HULK;
 
+/// <summary>
+/// Class Lexer
+/// </summary>
+
 public class Lexer
 {
+
     public List<Token> AllTokens;
     public List<ERROR> errores;
 
@@ -12,10 +17,9 @@ public class Lexer
 
         errores = new List<ERROR>();
 
-        MakeTokens(entrada);
+        Tokenizar(entrada);
     }
-
-    public void MakeTokens(string x)
+    public void Tokenizar(string x)
     {
         for (int i = 0; i < x.Length; i++)
         {
